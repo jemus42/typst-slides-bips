@@ -12,11 +12,26 @@
 #let BIPSorange = rgb(250, 133, 55)
 #let BIPSgreen = rgb(49, 210, 57)
 
+#let bips-colors = (
+  white: white.darken(1%),
+  blue: rgb(23, 99, 170),
+  gray: rgb(66, 66, 66),
+  orange: rgb(250, 133, 55),
+  green: rgb(49, 210, 57)
+  )
+
 #let base_size = 22pt
 #let title_size = 42pt
 #let header_size = 28pt
 
-#let divider = line.with(length: 90%, stroke: rgb("e4e5ea"))
+#let bips-author-main = state("bips-author-main", none)
+#let bips-author-main-email = state("bips-author-main-email", none)
+#let bips-lang = state("bips-lang", "english")
+#let bips-institute-name = state("bips-institute-name", none)
+#let bips-institute-web = state("bips-institute-web", none)
+
+
+// #let divider = line.with(length: 90%, stroke: rgb("e4e5ea"))
 
 #let gradient(height: 2pt) = {
   box(width: 90%,
@@ -60,19 +75,21 @@
   image(logo, height: height, width: width)
 }
 
-
 #let bips-theme(
-  aspect-ratio: "16-9", logo: "bips-logo.png", german: false,
+  aspect-ratio: "16-9",
+  logo: "bips-logo.png",
+  german: false,
+  author_corresponding: (name: none, email: none),
   body) = {
 
   set page(
     paper: "presentation-" + aspect-ratio,
-    fill: background-color,
+    fill: bips-colors.white,
     margin: (x: 10%, top: 0%, bottom: 8%)
   )
 
   // Default text options for slide contents
-  set text(fill: BIPSgray, size: base_size, font: "Fira Sans", weight: "light")
+  set text(fill: bips-colors.gray, size: base_size, font: "Fira Sans", weight: "light")
 
   // Widen spacing in lists
   // Tight lists use par(leading: ) which is annoying as it also changes line spacing withing
@@ -87,15 +104,29 @@
   // Override heading defaults just so I can use semantic elements rather than showing text around
   show heading.where(level: 1): it => [
     #set align(center)
-    #set text(size: title_size, fill: BIPSblue, weight: "regular")
+    #set text(size: title_size, fill: bips-colors.blue, weight: "regular")
     #block(it.body)
   ]
 
   show heading.where(level: 2): it => [
     #set align(center)
-    #set text(size: header_size, fill: BIPSblue, weight: "regular")
+    #set text(size: header_size, fill: bips-colors.blue, weight: "regular")
     #block(it.body)
   ]
+
+  bips-author-main.update(author_corresponding.name)
+  bips-author-main-email.update(author_corresponding.email)
+
+  if (german) {
+    bips-lang.update("german")
+    bips-institute-web.update(
+      link("https://leibniz-bips.de")[www.leibniz-bips.de]
+    )
+  } else {
+    bips-institute-web.update(
+      link("https://leibniz-bips.de/en")[www.leibniz-bips.de/en]
+    )
+  }
 
   body
 }
@@ -104,8 +135,7 @@
   title: [],
   subtitle: [],
   author: none,
-  author_corresponding: none,
-  institute: BIPS_en,
+  institute: none,
   date: datetime.today().display(),
   occasion: none
 ) = {
@@ -113,6 +143,20 @@
   set page(background: logoblock(number: false))
 
   polylux-slide({
+
+  if (author == none) {
+    author = bips-author-main.display()
+  }
+
+  if (institute == none) {
+    locate(loc => {
+      if (bips-lang.at(loc) == "english") {
+        bips-institute-name.update(BIPS_en)
+      } else if (bips-lang.at(loc) == "german") {
+        bips-institute-name.update(BIPS_de)
+      }
+    })
+  }
 
     set align(center + horizon)
 
@@ -127,9 +171,9 @@
     author
     parbreak()
 
-    set text(fill: BIPSgray)
+    set text(fill: bips-colors.gray)
 
-    institute
+    bips-institute-name.display()
     parbreak()
 
     v(2cm)
@@ -150,6 +194,7 @@
 )
 
 #let slide(title: [], body) = {
+
   set page(background: logoblock())
 
   polylux-slide({
@@ -167,7 +212,7 @@
       //cell()
       {
         set align(left + horizon)
-        text(body, fill: BIPSgray)
+        text(body, fill: bips-colors.gray)
       },
     )
   })
@@ -188,14 +233,14 @@
       //cell()
       [
         #set align(center + horizon)
-        #set text(fill: BIPSblue)
+        #set text(fill: bips-colors.blue)
         #text(weight: "regular", size: 25pt)[#thankstext]
 
         #body
 
         #v(30%)
         #set text(size: 17pt)
-        www.leibniz-bips.de/en
+        #bips-institute-web.display()
       ],
       //cell()
       [
@@ -206,11 +251,11 @@
             #set align(right + horizon)
             #set text(size: 17pt)
             #text(weight: "regular")[Contact] \
-            #text(fill: BIPSblue)[Lukas Burk] \
-            #BIPS_en \
+            #text(fill: bips-colors.blue)[#bips-author-main.display()] \
+            #bips-institute-name.display() \
             Achterstraße 30 \
             D-28359 Bremen \
-            #link("burk@leibniz-bips.de")[burk\@leibniz-bips.de]
+            #bips-author-main-email.display()
           ],
           //cell()
           [

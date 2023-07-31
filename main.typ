@@ -1,14 +1,19 @@
 #import "bips.typ": *
 
 #show: bips-theme.with(
-  aspect-ratio: "4-3"
+  aspect-ratio: "4-3",
+  author_corresponding: (
+    name: [Author McAuthorson],
+    email: "mcauthorson@leibniz-bips.de"
+  ),
+  german: true
 )
 
 #title-slide(
-  title: "An extrordinary presentation",
+  title: "An impressive display of confusion in a 4D manifold",
   subtitle: "An exercise in futility",
-  author: "Author McAuthorson",
-  institute: BIPS_en,
+  //author: "Author McAuthorson",
+  //institute: none,
   //date: [],
   occasion: "Conference of Things and Stuff"
 )
@@ -19,6 +24,10 @@
   #rect(width: 75%, height: 2%, fill: luma(150))
 
   Hello
+
+  #bips-colors.blue
+
+  #bips-lang.display()
 ]
 
 #slide(title: "A non-tight list: Doing things for the sake of it")[
