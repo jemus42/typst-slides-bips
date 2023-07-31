@@ -4,9 +4,9 @@
   aspect-ratio: "4-3",
   author_corresponding: (
     name: [Author McAuthorson],
-    email: "mcauthorson@leibniz-bips.de"
+    email: link("mailto:mcauthorson@leibniz-bips.de")[mcauthorson\@leibniz-bips.de]
   ),
-  german: true
+  lang: "german"
 )
 
 #title-slide(
@@ -88,8 +88,7 @@
   ```
 ]
 
-// thankstext has a default, also possible to just call #thanks() and be done with it
-#thanks(thankstext: "So long, and thanks for all the fish")[
-  I also wanted to thank all my fans, \
-  without them I'd be really warm
+
+#thanks(thankstext: "Thank you for your attention!")[
+
 ]

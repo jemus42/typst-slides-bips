@@ -13,7 +13,7 @@
 #let BIPSgreen = rgb(49, 210, 57)
 
 #let bips-colors = (
-  white: white.darken(1%),
+  white: rgb(253, 253, 253),
   blue: rgb(23, 99, 170),
   gray: rgb(66, 66, 66),
   orange: rgb(250, 133, 55),
@@ -29,7 +29,7 @@
 #let bips-lang = state("bips-lang", "english")
 #let bips-institute-name = state("bips-institute-name", none)
 #let bips-institute-web = state("bips-institute-web", none)
-
+#let bips-contact-header = state("bips-contact-header", none)
 
 // #let divider = line.with(length: 90%, stroke: rgb("e4e5ea"))
 
@@ -78,7 +78,7 @@
 #let bips-theme(
   aspect-ratio: "16-9",
   logo: "bips-logo.png",
-  german: false,
+  lang: "english",
   author_corresponding: (name: none, email: none),
   body) = {
 
@@ -116,17 +116,7 @@
 
   bips-author-main.update(author_corresponding.name)
   bips-author-main-email.update(author_corresponding.email)
-
-  if (german) {
-    bips-lang.update("german")
-    bips-institute-web.update(
-      link("https://leibniz-bips.de")[www.leibniz-bips.de]
-    )
-  } else {
-    bips-institute-web.update(
-      link("https://leibniz-bips.de/en")[www.leibniz-bips.de/en]
-    )
-  }
+  bips-lang.update(lang)
 
   body
 }
@@ -140,23 +130,28 @@
   occasion: none
 ) = {
 
-  set page(background: logoblock(number: false))
 
   polylux-slide({
+  // Setting this inside here messes up layout by introducing empty space,
+  // setting it outside polylux-slide() also causes issues down the line.
+  // set page(background: logoblock(number: false))
 
-  if (author == none) {
-    author = bips-author-main.display()
-  }
+  // This is scuffed.
+    pad(top: 30pt, right: -50pt, align(right + top, logo(height: 15%)))
 
-  if (institute == none) {
-    locate(loc => {
-      if (bips-lang.at(loc) == "english") {
-        bips-institute-name.update(BIPS_en)
-      } else if (bips-lang.at(loc) == "german") {
-        bips-institute-name.update(BIPS_de)
-      }
-    })
-  }
+    if (author == none) {
+      author = bips-author-main.display()
+    }
+
+    if (institute == none) {
+      locate(loc => {
+        if (bips-lang.at(loc) == "english") {
+          bips-institute-name.update(BIPS_en)
+        } else if (bips-lang.at(loc) == "german") {
+          bips-institute-name.update(BIPS_de)
+        }
+      })
+    }
 
     set align(center + horizon)
 
@@ -219,17 +214,29 @@
 }
 
 
-#let thanks(thankstext: [Thank you for your attention!], body) = {
+#let thanks(thankstext: [], body) = {
   polylux-slide({
+
+    locate(loc => {
+      if (bips-lang.at(loc) == "english") {
+        bips-contact-header.update("Contact")
+        bips-institute-web.update(link("https://leibniz-bips.de/en")[www.leibniz-bips.de/en])
+      } else if (bips-lang.at(loc) == "german") {
+        bips-contact-header.update("Kontakt")
+        bips-institute-web.update(link("https://leibniz-bips.de")[www.leibniz-bips.de])
+      }
+    })
+
 
     // One large area above and two columns below, resulting in 3 cells
     // But need two grids I guess. Probably possible to do with just one 2 column
     // situation below a normal area with some fixed vertical spacing.
 
     grid(
-      columns: (100%),
-      rows: (50%, 33%),
-      gutter: 0pt,
+      columns: 1,
+      rows: (10%, 40%, 10%, 40%),
+      gutter: 0em,
+      [],
       //cell()
       [
         #set align(center + horizon)
@@ -237,20 +244,22 @@
         #text(weight: "regular", size: 25pt)[#thankstext]
 
         #body
-
-        #v(30%)
-        #set text(size: 17pt)
+      ],
+      //cell()
+      [
+        #set align(center + top)
+        #set text(size: 1em)
         #bips-institute-web.display()
       ],
       //cell()
       [
         #grid(
-          columns: (50%, 50%), rows: 1, gutter: 1em,
+          columns: (55%, 45%), rows: 100%, gutter: 0em,
           //cell()
           [
-            #set align(right + horizon)
-            #set text(size: 17pt)
-            #text(weight: "regular")[Contact] \
+            #set align(right + bottom)
+            #set text(size: 0.85em)
+            #text(weight: "regular")[#bips-contact-header.display()] \
             #text(fill: bips-colors.blue)[#bips-author-main.display()] \
             #bips-institute-name.display() \
             Achterstraße 30 \
@@ -259,8 +268,8 @@
           ],
           //cell()
           [
-            #set align(horizon + center)
-            #logo()
+            #set align(center + bottom)
+            #logo(height: 80%)
           ]
         )
       ]
