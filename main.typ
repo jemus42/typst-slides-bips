@@ -6,7 +6,8 @@
     name: [Author McAuthorson],
     email: link("mailto:mcauthorson@leibniz-bips.de")[mcauthorson\@leibniz-bips.de]
   ),
-  lang: "german"
+  lang: "german",
+  logo: "bips-logo.png"
 )
 
 #title-slide(
@@ -23,11 +24,11 @@
   Guess where I've been debugging the gradient line thingy.
   #rect(width: 75%, height: 2%, fill: luma(150))
 
-  Hello
+  Here's some state:
 
-  #bips-colors.blue
-
-  #bips-lang.display()
+  - #bips-colors.blue
+  - #bips-lang.display()
+  - #bips-logo.display()
 ]
 
 #slide(title: "A non-tight list: Doing things for the sake of it")[

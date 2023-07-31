@@ -30,6 +30,7 @@
 #let bips-institute-name = state("bips-institute-name", none)
 #let bips-institute-web = state("bips-institute-web", none)
 #let bips-contact-header = state("bips-contact-header", none)
+#let bips-logo = state("bips-logo", none)
 
 // #let divider = line.with(length: 90%, stroke: rgb("e4e5ea"))
 
@@ -50,36 +51,41 @@
 
 // Pre-set block of logo in top right, with or without numbering (for title slide)
 // This feels pretty weird syntactically.
-#let logoblock(logo: "bips-logo.png", number: true) = {
-  [
-      #let logo_img = image(logo, height: 15%)
-      #let slide_num = logic.logical-slide.display()
+#let logoblock(number: true) = {
 
-      #set align(top + right)
-      #set text(size: 20pt)
+  locate(loc => {
+    let logo_img = image(bips-logo.at(loc), height: 15%, width: auto)
 
-      #if (number) {
-        pad(rest: 30pt)[
-            #logo_img
-            #pad(right: 35pt, top: -14pt, slide_num)
-        ]
-      } else {
-        pad(rest: 30pt, logo_img)
-      }
+    let slide_num = logic.logical-slide.display()
 
-    ]
+    set align(top + right)
+    set text(size: 20pt)
+
+    if (number) {
+      pad(rest: 30pt)[
+        #logo_img
+        #pad(right: 35pt, top: -14pt, slide_num)
+      ]
+    } else {
+      pad(rest: 30pt, logo_img)
+    }
+  })
 }
 
-// This will maybe make sense once the logo path is global state
-#let logo(logo: "bips-logo.png", height: 100%, width: auto) = {
-  image(logo, height: height, width: width)
+// This feels poorly thought out. It is.
+#let logo(height: 100%, width: auto) = {
+  locate(loc => {
+    image(bips-logo.at(loc), height: height, width: width)
+  })
+
+  //image(logo, height: height, width: width)
 }
 
 #let bips-theme(
   aspect-ratio: "16-9",
+  author_corresponding: (name: none, email: none),
   logo: "bips-logo.png",
   lang: "english",
-  author_corresponding: (name: none, email: none),
   body) = {
 
   set page(
@@ -134,6 +140,7 @@
   bips-author-main.update(author_corresponding.name)
   bips-author-main-email.update(author_corresponding.email)
   bips-lang.update(lang)
+  bips-logo.update(logo)
 
   body
 }
@@ -146,8 +153,6 @@
   date: datetime.today().display(),
   occasion: none
 ) = {
-
-
   polylux-slide({
   // Setting this inside here messes up layout by introducing empty space,
   // setting it outside polylux-slide() also causes issues down the line.
@@ -218,7 +223,7 @@
       //cell()
       {
         set align(horizon)
-        pad(right: 7.5%, heading(level: 2, title))
+        pad(right: 8%, heading(level: 2, title))
       },
       align(horizon, gradient()),
       //cell()
@@ -253,7 +258,7 @@
       columns: 1,
       rows: (10%, 40%, 10%, 40%),
       gutter: 0em,
-      [],
+      [], // Should have maybe set a top margin instead
       //cell()
       [
         #set align(center + horizon)
