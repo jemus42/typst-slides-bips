@@ -16,16 +16,12 @@
 #let title_size = 42pt
 #let header_size = 28pt
 
-
 #let divider = line.with(length: 90%, stroke: rgb("e4e5ea"))
 
 #let gradient(height: 2pt) = {
   box(width: 90%,
     for x in range(150, 250, steps: 1) {
-
-      for i in range(10, steps: 1) {
-        box(rect(width: 0.1%, height: height, fill: luma(x)))
-      }
+      box(rect(width: 1%, height: height, fill: luma(x)))
     }
   )
 }
@@ -37,18 +33,24 @@
   )
 }
 
-#let logoblock(logo: "bips-logo.png") = {
+#let logoblock(logo: "bips-logo.png", number: true) = {
   [
       #let logo_img = image(logo, height: 15%)
 
       #set align(top + right)
       #set text(size: 20pt)
-      #pad(rest: 30pt,
-        box([
-          #logo_img
-            #pad(right: 35pt, top: -14pt, logic.logical-slide.display())
+      #let slide_num = logic.logical-slide.display()
+      #if (number) {
+        pad(rest: 30pt,
+          box([
+            #logo_img
+            #pad(right: 35pt, top: -14pt, slide_num)
           ])
-      )
+        )
+      } else {
+        pad(rest: 30pt, box([#logo_img]))
+      }
+
     ]
 }
 
@@ -62,22 +64,29 @@
     margin: (x: 10%, top: 0%, bottom: 8%)
   )
 
+  // Default text options for slide contents
+  set text(fill: BIPSgray, size: base_size, font: "Fira Sans", weight: "light")
 
-  set text(
-    fill: BIPSgray, size: base_size, font: "Fira Sans", weight: "light"
-  )
+  // Widen spacing in lists
+  // Tight lists use par(leading: ) which is annoying as it also changes line spacing withing
+  // list items. Ideally I'd like to convert all tight lists to non-tight lists.
+  show list.where(tight: true): it => [
+    #set list(marker: "\u{25CF}")
+    #set par(leading: 1.1em)
+    #it
+  ]
+  show list.where(tight: false): set list(marker: "\u{25CF}", spacing: 1.5em)
 
-  show heading: set text(weight: "light")
-
+  // Override heading defaults just so I can use semantic elements rather than showing text around
   show heading.where(level: 1): it => [
     #set align(center)
-    #set text(size: title_size, fill: BIPSblue, weight: "light")
+    #set text(size: title_size, fill: BIPSblue, weight: "regular")
     #block(it.body)
   ]
 
   show heading.where(level: 2): it => [
     #set align(center)
-    #set text(size: header_size, fill: BIPSblue, weight: "light")
+    #set text(size: header_size, fill: BIPSblue, weight: "regular")
     #block(it.body)
   ]
 
@@ -92,13 +101,16 @@
   date: datetime.today().display(),
   occasion: none
 ) = {
+
+  set page(background: logoblock(number: false))
+
   polylux-slide({
 
     set align(center + horizon)
 
     heading(level: 1, title-case(title))
     set text(fill: BIPSblue)
-    subtitle
+    text(subtitle, weight: "regular")
 
     v(5%)
 
@@ -131,6 +143,7 @@
 
 #let slide(title: [], body) = {
   set page(background: logoblock())
+
 
   polylux-slide({
 
