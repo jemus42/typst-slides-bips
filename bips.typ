@@ -88,8 +88,25 @@
     margin: (x: 10%, top: 0%, bottom: 8%)
   )
 
+  // Not sure if necessary to adapt text
+  // language and region settings
+  let text-lang = (lang: none, region: none)
+
+  if (lang == "english") {
+    text-lang = (lang: "en", region: "US")
+  } else if (lang == "german") {
+    text-lang = (lang: "de", region: "DE")
+  }
+
   // Default text options for slide contents
-  set text(fill: bips-colors.gray, size: base_size, font: "Fira Sans", weight: "light")
+  set text(
+    fill: bips-colors.gray,
+    size: base_size,
+    font: "Fira Sans",
+    weight: "light",
+    lang: text-lang.lang,
+    region: text-lang.region
+  )
 
   // Widen spacing in lists
   // Tight lists use par(leading: ) which is annoying as it also changes line spacing withing
