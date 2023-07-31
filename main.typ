@@ -78,3 +78,9 @@
   )
   ```
 ]
+
+// thankstext has a default, also possible to just call #thanks() and be done with it
+#thanks(thankstext: "So long, and thanks for all the fish")[
+  I also wanted to thank all my fans, \
+  without them I'd be really warm
+]

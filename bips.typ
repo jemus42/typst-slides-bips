@@ -33,26 +33,33 @@
   )
 }
 
+// Pre-set block of logo in top right, with or without numbering (for title slide)
+// This feels pretty weird syntactically.
 #let logoblock(logo: "bips-logo.png", number: true) = {
   [
       #let logo_img = image(logo, height: 15%)
+      #let slide_num = logic.logical-slide.display()
 
       #set align(top + right)
       #set text(size: 20pt)
-      #let slide_num = logic.logical-slide.display()
+
       #if (number) {
-        pad(rest: 30pt,
-          box([
+        pad(rest: 30pt)[
             #logo_img
             #pad(right: 35pt, top: -14pt, slide_num)
-          ])
-        )
+        ]
       } else {
-        pad(rest: 30pt, box([#logo_img]))
+        pad(rest: 30pt, logo_img)
       }
 
     ]
 }
+
+// This will maybe make sense once the logo path is global state
+#let logo(logo: "bips-logo.png", height: 100%, width: auto) = {
+  image(logo, height: height, width: width)
+}
+
 
 #let bips-theme(
   aspect-ratio: "16-9", logo: "bips-logo.png", german: false,
@@ -97,6 +104,7 @@
   title: [],
   subtitle: [],
   author: none,
+  author_corresponding: none,
   institute: BIPS_en,
   date: datetime.today().display(),
   occasion: none
@@ -135,7 +143,7 @@
 
 // Cell with outline to debug grid arrangements
 #let cell = rect.with(
-  inset: 8pt,
+  inset: 5pt,
 //  fill: rgb("efefef"),
   width: 100%, height: 100%,
   radius: 0pt
@@ -143,7 +151,6 @@
 
 #let slide(title: [], body) = {
   set page(background: logoblock())
-
 
   polylux-slide({
 
@@ -162,6 +169,56 @@
         set align(left + horizon)
         text(body, fill: BIPSgray)
       },
+    )
+  })
+}
+
+
+#let thanks(thankstext: [Thank you for your attention!], body) = {
+  polylux-slide({
+
+    // One large area above and two columns below, resulting in 3 cells
+    // But need two grids I guess. Probably possible to do with just one 2 column
+    // situation below a normal area with some fixed vertical spacing.
+
+    grid(
+      columns: (100%),
+      rows: (50%, 33%),
+      gutter: 0pt,
+      //cell()
+      [
+        #set align(center + horizon)
+        #set text(fill: BIPSblue)
+        #text(weight: "regular", size: 25pt)[#thankstext]
+
+        #body
+
+        #v(30%)
+        #set text(size: 17pt)
+        www.leibniz-bips.de/en
+      ],
+      //cell()
+      [
+        #grid(
+          columns: (50%, 50%), rows: 1, gutter: 1em,
+          //cell()
+          [
+            #set align(right + horizon)
+            #set text(size: 17pt)
+            #text(weight: "regular")[Contact] \
+            #text(fill: BIPSblue)[Lukas Burk] \
+            #BIPS_en \
+            Achterstraße 30 \
+            D-28359 Bremen \
+            #link("burk@leibniz-bips.de")[burk\@leibniz-bips.de]
+          ],
+          //cell()
+          [
+            #set align(horizon + center)
+            #logo()
+          ]
+        )
+      ]
     )
   })
 }
