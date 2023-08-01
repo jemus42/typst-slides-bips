@@ -7,17 +7,30 @@
     email: link("mailto:mcauthorson@leibniz-bips.de")[mcauthorson\@leibniz-bips.de]
   ),
   lang: "german",
-  logo: "bips-logo.png"
+  //logo: "logo.png"
 )
 
 #title-slide(
   title: "An impressive display of confusion in a 4D manifold",
   subtitle: "An exercise in futility",
   //author: "Author McAuthorson",
-  //institute: none,
+  institute: [Institute of Impressive Demos],
   //date: [],
   occasion: "Conference of Things and Stuff"
 )
+
+#polylux-slide({
+  set page(
+    paper: "presentation-4-3",
+    fill: bips-colors.white,
+    margin: (x: 10%, top: 0%, bottom: 8%)
+  )
+
+  [
+    Hello
+  ]
+})
+
 
 #slide(title: "Fun for the whole family")[
 
@@ -26,8 +39,9 @@
 
   Here's some state:
 
-  - #bips-colors.blue
+  - #locate(loc => {bips-author-main-email.at(loc)})
   - #bips-lang.display()
+  - #locate(loc => {bips-logo.at(loc) == "bips-logo.png"})
   - #bips-logo.display()
 ]
 
@@ -72,7 +86,7 @@
   - #text(lorem(9), size: 42pt)
 ]
 
-#slide(title: "Something with code I guess")[
+#slide(title: [Something with `code` I guess])[
   ```r
   all_slide_check <- all_slide_check |>
   dplyr::mutate(dplyr::across(dplyr::where(is.logical), \(x) {
@@ -89,7 +103,24 @@
   ```
 ]
 
+#slide(title: "Something with references")[
+  Hey you like trees? @ishwaran2008randomsurvival
 
-#thanks(thankstext: "Thank you for your attention!")[
+  //#cite("ishwaran2008randomsurvival", style: "alphanumerical")
+
+  The elastic net is given as
+  $ 1/n thin norm(hat(y)_i - y_i)_2^2 + lambda (alpha abs(beta_j) + (1-alpha)/2 beta_j^2) $ @zou2005regularizationvariable
+
+  This is another citation. @bender2005generatingsurvival
 
 ]
+
+#thanks(thankstext: "Thank you for your attention!")[
+  // You can add additional text here
+]
+
+#slide-references(title: "References")[
+
+]
+
+//#hide(bibliography("references.bib"))
